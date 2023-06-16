@@ -18,17 +18,19 @@ class PermissionResource extends Resource
     protected static ?string $model = Permission::class;
     protected static ?string $label = 'permissão';
     protected static ?string $pluralLabel = 'permissões';
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-hand';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nome da permissão')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('roles')
                     ->multiple()
+                    ->label('Funções que serão aplicadas as novas regras de permissão')
                     ->relationship('roles', 'name')
                     ->preload()
             ]);
@@ -47,7 +49,6 @@ class PermissionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

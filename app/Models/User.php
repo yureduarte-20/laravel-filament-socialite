@@ -48,7 +48,6 @@ implements FilamentUser
 
     public function canAccessFilament(): bool
     {
-        // TODO: Implement canAccessFilament() method.
-        return true;
+        return $this->hasPermissionTo('access_panel');
     }
 }

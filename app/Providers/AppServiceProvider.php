@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use DutchCodingCompany\FilamentSocialite\Facades\FilamentSocialite as FilamentSocialiteFacade;
@@ -30,9 +32,14 @@ class AppServiceProvider extends ServiceProvider
             //dd($config);
             return $socialite->buildProvider(SocialiteMockProvider::class, $config);
         });
-        FilamentSocialiteFacade::setCreateUserCallback(fn (SocialiteUserContract $oauthUser, FilamentSocialite $socialite) => $socialite->getUserModelClass()::create([
-            'name' => $oauthUser->getName(),
-            'email' => $oauthUser->getEmail(),
-        ]));
+        FilamentSocialiteFacade::setCreateUserCallback(function (SocialiteUserContract $oauthUser, FilamentSocialite $socialite) {
+
+           $user = $socialite->getUserModelClass()::create([
+                'name' => $oauthUser->getName(),
+                'email' => $oauthUser->getEmail(),
+            ]);
+           $user->assignRole(Role::SIMPLE_USER_ROLE_NAME);
+           return $user;
+        });
     }
 }

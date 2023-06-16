@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\Role;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -16,8 +17,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $label = 'usuário';
+    protected static ?string $pluralLabel = 'usuários';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
     {
@@ -36,6 +38,16 @@ class UserResource extends Resource
                     ->password()
                     ->label('Senha')
                     ->maxLength(255),
+                Forms\Components\Select::make('roles')
+                    ->relationship('roles', 'name', function (Builder $builder){
+                        if(auth()->user()->hasRole(Role::ADMIN_ROLE_NAME)){
+                            return null;
+                        }
+                        else return $builder->where('names', '!=', Role::ADMIN_ROLE_NAME);
+                    })
+                   ->multiple()
+                    ->label('Funções')
+                    ->preload()
 
             ]);
     }
@@ -55,10 +67,12 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+
+            ])
+            ;
     }
 
     public static function getRelations(): array

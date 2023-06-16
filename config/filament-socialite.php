@@ -30,7 +30,9 @@ return [
             'label' => 'MockServer',
         ]
     ],
-
+    'auth' =>[
+        'login-via' => 'Logar com'
+    ],
     'user_model' => \App\Models\User::class,
 
     // Specify the default redirect route for successful logins

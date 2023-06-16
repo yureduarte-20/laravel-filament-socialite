@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
+use App\Policies\PermissionPolicies;
+use App\Policies\RolePolicies;
+use App\Policies\UserPolicies;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use DutchCodingCompany\FilamentSocialite\Facades\FilamentSocialite as FilamentSocialiteFacade;
 use DutchCodingCompany\FilamentSocialite\FilamentSocialite;
@@ -17,6 +23,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         //
+        User::class => UserPolicies::class,
+        Permission::class => PermissionPolicies::class,
+        Role::class => RolePolicies::class
     ];
 
     /**
@@ -24,9 +33,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        FilamentSocialiteFacade::setCreateUserCallback(fn (SocialiteUserContract $oauthUser, FilamentSocialite $socialite) => $socialite->getUserModelClass()::create([
-            'name' => $oauthUser->getName(),
-            'email' => $oauthUser->getEmail(),
-        ]));
+
     }
 }
